@@ -1,0 +1,96 @@
+# CivicSense Detection Configuration
+# All thresholds, waste categories, and detection settings
+
+[detection]
+confidence = 0.15
+iou = 0.45
+image_size = 640
+device = "auto"
+# Detection confidence above which a FLAGGED event is auto-confirmed
+# (status set to "approved" immediately instead of waiting for manual review).
+auto_confirm_threshold = 0.75
+
+[detection.models]
+detection = "yolo26n.pt"
+pose = "yolo26n-pose.pt"
+
+[detection.tracking]
+max_age = 30
+max_distance = 150.0
+min_hits = 1
+
+[detection.thresholds]
+hand_proximity = 80.0
+waste_fall_speed = 2.0
+waste_ground_y = 0.75
+dustbin_proximity = 100.0
+person_waste_distance = 200.0
+ground_object_distance = 250.0
+arm_raised_ratio = 0.25
+
+[detection.clip]
+# 10-second clip settings for flagged video segments
+duration_seconds = 10
+pre_event_seconds = 3
+post_event_seconds = 7
+
+[storage]
+# Root directories for output
+detected_dir = "detected"
+screenshots_dir = "detected/screenshots"
+clips_dir = "detected/clips"
+annotated_dir = "detected/annotated"
+evidence_dir = "detected/evidence"
+logs_dir = "logs"
+exports_dir = "exports"
+
+[logging]
+level = "INFO"
+rotation = "10 MB"
+retention = "7 days"
+compression = "gz"
+rich_tracebacks = true
+json_output = false
+
+# Waste categories - objects that count as potential litter/waste
+# These are COCO dataset classes that typically appear as trash
+# NOTE: COCO has 80 classes. "plastic bag", "bucket", "mug" are NOT in COCO.
+# The closest plastic waste classes are: bottle, cup, bowl, wine glass.
+[waste.categories]
+# Plastics & beverages (most common litter)
+plastics = ["bottle", "cup", "wine glass", "bowl"]
+
+# Food items (vegetarian)
+food_veg = ["banana", "apple", "orange", "broccoli", "carrot", "sandwich"]
+
+# Food items (non-vegetarian)
+food_nonveg = ["hot dog", "pizza", "donut", "cake"]
+
+# Food utensils
+utensils = ["fork", "knife", "spoon"]
+
+# Electronics (could be litter if abandoned)
+electronics = ["cell phone", "laptop", "mouse", "keyboard", "remote"]
+
+# Stationery & miscellaneous
+miscellaneous = ["book", "scissors", "teddy bear", "sports ball", "kite", "frisbee"]
+
+# Containers that could be dustbins
+dustbin_candidates = ["potted plant", "vase", "sink", "toilet"]
+
+# NON-LITTER: personal items people carry (NOT waste/litter)
+# Excluded from waste detection to prevent false positives
+# personal = ["backpack", "umbrella", "handbag", "suitcase"]
+
+# NON-LITTER: large/vehicle objects that should never be flagged as litter
+non_litter = ["car", "truck", "bus", "motorcycle", "bicycle", "tie", "suitcase", "skateboard", "surfboard", "snowboard", "skis"]
+
+[reporting]
+# What to include in detection reports
+include_person_count = true
+include_waste_breakdown = true
+include_ground_objects = true
+include_dustbin_proximity = true
+include_hand_analysis = true
+include_timestamp = true
+include_screenshot = true
